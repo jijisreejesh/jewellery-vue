@@ -75,17 +75,17 @@ const showCompositionDialog=()=>{
   //editedItem.value=item;
 }
 const save=(()=>{
-  if(editedItem.composition[0].count===0 && editedItem.composition[0].material===''&&editedItem.composition[0].purity===''&&editedItem.composition[0].price===0&&editedItem.composition[0].weight===0)
+  if(editedItem.value.composition[0].count===0 && editedItem.value.composition[0].material===''&&editedItem.value.composition[0].purity===''&&editedItem.value.composition[0].price===0&&editedItem.value.composition[0].weight===0)
    {
-    item.composition[0]=composition;
-    console.log(item);
+    editedItem.value.composition[0]=composition.value;
+    console.log(editedItem.value);
    }
    else
    {
-    editedItem.composition.push(composition)
-    console.log(editedItem);
+    editedItem.value.composition.push(composition.value)
+    console.log(editedItem.value);
    }
-   compositionSave(editedItem)
+   compositionSave(editedItem.value)
 })
 </script>
 
