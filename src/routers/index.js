@@ -18,9 +18,10 @@ const router=createRouter({
             component:CartView
         },
         {
-            path:'/edit',
-            name:"edit",
-            component:EditCart
+            path:'/edit/:id',
+            name:'editingPage',
+            component:EditCart,
+            props:true
         }
     ]
 })

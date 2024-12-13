@@ -22,12 +22,8 @@ export const useCartStore=defineStore("cart",()=>{
       });
     //actions
     const save = (editedItem) => {
-        // if (editedIndex.value > -1) {
-        //   Object.assign(itemsArray.value[editedIndex.value], editedItem.value);
-        // } else {
           editedItem.id = uuidv4();
           itemsArray.value.push(editedItem);
-       // }
       localStore();
          
       };
@@ -43,6 +39,21 @@ const deleteItemConfirm=(item)=>{
       itemsArray.value.splice(index, 1);
       localStore();
   }
-  
-    return {itemsArray,save,defaultItem,deleteItemConfirm};
+  const editedItemSave=((item)=>{
+    const itemSearch = itemsArray.value.find((i) => {
+      return i.id === item.id;
+    });
+    let index = itemsArray.value.indexOf(itemSearch);
+    Object.assign(itemsArray.value[index], item);
+    localStore();
+  })
+  const uploadImage=((item)=>{
+    const itemSearch = itemsArray.value.find((i) => {
+      return i.id === item.id;
+    });
+    let index = itemsArray.value.indexOf(itemSearch);
+    Object.assign(itemsArray.value[index], item);
+    localStore();
+  })
+    return {itemsArray,save,defaultItem,uploadImage,deleteItemConfirm,editedItemSave};
 });

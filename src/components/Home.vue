@@ -45,19 +45,8 @@ onMounted(()=>{
 
 
 const editItem=(item)=>{
-//   editedIndex.value = itemsArray.value.indexOf(item);
-//   // editedItem.value = Object.assign({}, item);
-//   editedItem.value = {...item};
-//   localStore();
-//   dialog.value = true;
-// }
-console.log(item);
-
-router.push(`/edit/${item}`)
-
+router.push(`/edit/${item.id}`)
 }
-
-
 
 //Close editing dialog box
 const close = () => {
