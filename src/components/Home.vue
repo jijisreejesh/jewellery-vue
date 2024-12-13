@@ -1,82 +1,64 @@
 <script setup>
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
-import { v4 as uuidv4 } from "uuid";
 import { IconTrash,IconPencil } from "@tabler/icons-vue";
+import { useRouter } from "vue-router";
+const router=useRouter();
 const store = useCartStore();
-const defaultItem = ref({
+const {save,deleteItemConfirm}=store;
+const {itemsArray,defaultItem}=storeToRefs(store)
+const editedItem = ref({
   id: "",
   name: "",
   category: "",
   description: "",
   totalPrice: 0,
   designUrl: "",
-  composition: [
-    {
-      material: "",
-      count: 0,
-      weight: 0,
-      price: 0,
-      purity: "",
-    },
-  ],
+        composition: [
+          {
+            material: "",
+            count: 0,
+            weight: 0,
+            price: 0,
+            purity: "",
+          },
+        ],
 });
 const headers = [
-  { title: "Id", key: "id"},
   { title: "Name", key: "name"},
   { title: "category", key: "category" },
   { title: "Description", key: "description"},
   { title: "TotalPrice", key: "totalPrice" },
    { title: 'Actions', key: 'actions'}
 ];
-//const { addItems } = store;
-const editedItem=ref({
-  id: "",
-  name: "",
-  category: "",
-  description: "",
-  totalPrice: 0,
 
-})
-const { itemsArray } = storeToRefs(store);
 const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
 
-const formTitle = computed(() => {
-  return editedIndex.value === -1 ? "New Item" : "Edit Item";
-});
 onMounted(()=>{
   let retrievedData=localStorage.getItem("items");
   if(retrievedData)
      itemsArray.value=JSON.parse(retrievedData)
 })
-// watch(dialog, (val) => {
-//   dialog.value = val || close();
-// });
-// watch(dialogDelete, (val) => {
-//   dialogDelete.value = val || closeDelete();
-// });
+
 
 const editItem=(item)=>{
-  editedIndex.value = itemsArray.value.indexOf(item);
-  editedItem.value = Object.assign({}, item);
-  localStore();
-  dialog.value = true;
+//   editedIndex.value = itemsArray.value.indexOf(item);
+//   // editedItem.value = Object.assign({}, item);
+//   editedItem.value = {...item};
+//   localStore();
+//   dialog.value = true;
+// }
+console.log(item);
+
+router.push(`/edit/${item}`)
+
 }
 
-const deleteItem=(item)=>{
-  editedIndex.value = itemsArray.value.indexOf(item);
-  editedItem.value = Object.assign({}, item);
-  dialogDelete.value = true;
-}
 
-const deleteItemConfirm=()=>{
-  itemsArray.value.splice(editedIndex.value, 1);
-  localStore();
-  closeDelete();
-}
+
 //Close editing dialog box
 const close = () => {
   dialog.value = false;
@@ -89,21 +71,12 @@ const closeDelete = () => {
   editedIndex.value=-1;
   editedItem.value=Object.assign({}, defaultItem.value)
 };
-const save = () => {
-  if (editedIndex.value > -1) {
-    Object.assign(itemsArray.value[editedIndex.value], editedItem.value);
-  } else {
-    editedItem.value.id = uuidv4();
-    itemsArray.value.push(editedItem.value);
-    editedItem.value={}
-  }
-localStore();
-  close();
-};
 
-const localStore=()=>{
-  localStorage.setItem("items",JSON.stringify(itemsArray.value))
+const showDeleteDialogBox=(item)=>{
+  dialogDelete.value = true;
+  editedItem.value=item;
 }
+
 </script>
 
 <template>
@@ -125,7 +98,7 @@ const localStore=()=>{
 
           <v-card>
             <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
+              <span class="text-h5">New Item</span>
             </v-card-title>
 
             <v-card-text>
@@ -176,7 +149,7 @@ const localStore=()=>{
               <v-btn color="blue-darken-1" variant="text" @click="close">
                 Cancel
               </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="save">
+              <v-btn color="blue-darken-1" variant="text" @click="save(editedItem)">
                 Save
               </v-btn>
             </v-card-actions>
@@ -196,7 +169,7 @@ const localStore=()=>{
               <v-btn
                 color="blue-darken-1"
                 variant="text"
-                @click="deleteItemConfirm"
+                @click="deleteItemConfirm(editedItem)"
                 >OK</v-btn
               >
               <v-spacer></v-spacer>
@@ -210,11 +183,9 @@ const localStore=()=>{
       <v-icon class="me-2" size="small" @click="editItem(item)" style="color:blue">
         <IconPencil/>
       </v-icon>
-      <v-icon size="small" @click="deleteItem(item)" style="color: red;"> <IconTrash/> </v-icon>
+      <v-icon size="small" @click="showDeleteDialogBox(item)" style="color: red;"> <IconTrash/> </v-icon>
     </template>  
-    <!-- <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
-    </template>  -->
+   
   </v-data-table>
 </template>
 cf
