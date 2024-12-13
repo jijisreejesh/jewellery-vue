@@ -61,9 +61,9 @@ const closeDelete = () => {
   editedItem.value=Object.assign({}, defaultItem.value)
 };
 
-const showDeleteDialogBox=(item)=>{
+const showDeleteDialogBox=()=>{
   dialogDelete.value = true;
-  editedItem.value=item;
+  //editedItem.value=item;
 }
 
 </script>
@@ -172,12 +172,12 @@ const showDeleteDialogBox=(item)=>{
       <v-icon class="me-2" size="small" @click="editItem(item)" style="color:blue">
         <IconPencil/>
       </v-icon>
-      <v-icon size="small" @click="showDeleteDialogBox(item)" style="color: red;"> <IconTrash/> </v-icon>
+      <v-icon size="small" @click="showDeleteDialogBox()" style="color: red;"> <IconTrash/> </v-icon>
     </template>  
    
   </v-data-table>
 </template>
-cf
+
 <style scoped>
 .headingClass .v-data-table thead{
   background-color: aqua;

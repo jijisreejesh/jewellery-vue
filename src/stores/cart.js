@@ -46,14 +46,19 @@ const deleteItemConfirm=(item)=>{
     let index = itemsArray.value.indexOf(itemSearch);
     Object.assign(itemsArray.value[index], item);
     localStore();
+    console.log(itemsArray.value[index]);
+    
   })
-  const uploadImage=((item)=>{
-    const itemSearch = itemsArray.value.find((i) => {
-      return i.id === item.id;
-    });
-    let index = itemsArray.value.indexOf(itemSearch);
-    Object.assign(itemsArray.value[index], item);
-    localStore();
-  })
-    return {itemsArray,save,defaultItem,uploadImage,deleteItemConfirm,editedItemSave};
+ 
+ const compositionSave=((item)=>{
+  const itemSearch = itemsArray.value.find((i) => {
+    return i.id === item.id;
+  });
+  let index = itemsArray.value.indexOf(itemSearch);
+   Object.assign(itemsArray.value[index], item);
+   localStore();   
+ 
+ })
+
+    return {itemsArray,save,defaultItem,deleteItemConfirm,editedItemSave,compositionSave};
 });
