@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconUpload, IconPhotoFilled } from "@tabler/icons-vue";
@@ -7,6 +7,7 @@ import CompositionTable from "./CompositionTable.vue";
 const store = useCartStore();
 const { itemsArray } = storeToRefs(store);
 const { editedItemSave } = store;
+const alert = ref(false);
 const props = defineProps({
   id: String,
 });
@@ -43,6 +44,14 @@ onMounted(() => {
 const cancelEdit = () => {
   editedItem.value = { ...retrievedItem };
 };
+const uploadImage = () => {
+  editedItemSave(editedItem.value);
+  alert.value = true;
+};
+const handleSave=(()=>{
+  alert.value=true;
+  editedItemSave(editedItem)
+})
 </script>
 
 <template>
@@ -73,7 +82,7 @@ const cancelEdit = () => {
             class="ma-4 outlined"
           >
             <template #append>
-              <IconUpload @click="editedItemSave(editedItem)" />
+              <IconUpload @click="uploadImage" />
             </template>
           </v-text-field>
         </v-card>
@@ -131,10 +140,11 @@ const cancelEdit = () => {
                 <v-btn variant="elevated" class="text-red" @click="cancelEdit">
                   Cancel
                 </v-btn>
+
                 <v-btn
                   class="text-blue"
                   variant="elevated"
-                  @click="editedItemSave(editedItem)"
+                  @click="handleSave"
                 >
                   Save
                 </v-btn>
@@ -145,5 +155,16 @@ const cancelEdit = () => {
       </v-col>
     </v-row>
   </v-container>
- <CompositionTable :id="props.id" />
-  </template>
+  <v-alert
+      v-model="alert"
+       border="start"
+      color="success"
+       close-label="Close Alert"
+      variant="tonal"
+       title="Alert"
+       elevation="2"
+      closable
+      >
+      Success</v-alert>
+  <CompositionTable :id="props.id" />
+</template>

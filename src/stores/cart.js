@@ -11,13 +11,13 @@ export const useCartStore=defineStore("cart",()=>{
         totalPrice: 0,
         designUrl: "",
         composition: [
-          {
-            material: "",
-            count: 0,
-            weight: 0,
-            price: 0,
-            purity: "",
-          },
+          // {
+          //   material: "",
+          //   count: 0,
+          //   weight: 0,
+          //   price: 0,
+          //   purity: "",
+          // },
         ],
       });
     //actions

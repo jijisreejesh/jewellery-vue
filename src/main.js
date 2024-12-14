@@ -4,6 +4,7 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import router from './routers/index'
 
+import '@mdi/font/css/materialdesignicons.css';
 
 // Vuetify
 import 'vuetify/styles'

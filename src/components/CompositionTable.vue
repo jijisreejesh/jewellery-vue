@@ -2,9 +2,9 @@
 import { ref, computed, onMounted } from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
-import { IconTrash, IconPencil, IconEditCircle } from "@tabler/icons-vue";
+import { IconTrash, IconPencil } from "@tabler/icons-vue";
 const store = useCartStore();
-const { itemsArray, defaultItem } = storeToRefs(store);
+const { itemsArray } = storeToRefs(store);
 const { compositionSave, deleteCompositionConfirm } = store;
 const props = defineProps({
   id: {
@@ -49,6 +49,7 @@ const composition = ref({
   price: 0,
   purity: "",
 });
+
 const headers = [
   { title: "Material,", key: "material" },
   { title: "count", key: "count" },
@@ -66,6 +67,13 @@ const formTitle = computed(() => {
 const closeComposition = () => {
   dialog.value = false;
   editedIndex.value = -1;
+  composition.value = {
+    material: "",
+    count: 0,
+    weight: 0,
+    price: 0,
+    purity: "",
+  };
   editedItem.value = { ...retrievedItem };
 };
 const closeDeleteCompositionDialog = () => {
@@ -78,20 +86,12 @@ const showCompositionDialogForDelete = (item) => {
   editedIndex.value = editedItem.value.composition.indexOf(item);
 };
 const save = () => {
-  if (
-    editedItem.value.composition[0].count === 0 &&
-    editedItem.value.composition[0].material === "" &&
-    editedItem.value.composition[0].purity === "" &&
-    editedItem.value.composition[0].price === 0 &&
-    editedItem.value.composition[0].weight === 0
-  ) {
-    editedItem.value.composition[0] = composition.value;
-  } else if (editedIndex.value > -1) {
-    editedItem.value.composition[editedIndex.value] = composition.value;
-    //console.log(editedItem.value.composition);
-  } else {
+  if (editedIndex.value === -1) {
     editedItem.value.composition.push(composition.value);
+  } else {
+    editedItem.value.composition[editedIndex.value] = composition.value;
   }
+  // editedItem.value.totalPrice+=composition.value.price;
   compositionSave(editedItem.value);
 
   dialog.value = false;
@@ -111,6 +111,13 @@ const deleteCompositionItem = () => {
   retrieveItemFromLocalStorage();
   editedIndex.value = -1;
   dialogDelete.value = false;
+  composition.value = {
+    material: "",
+    count: 0,
+    weight: 0,
+    price: 0,
+    purity: "",
+  };
 };
 const editComposition = (item) => {
   composition.value = { ...item };
