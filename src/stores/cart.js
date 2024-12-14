@@ -59,6 +59,18 @@ const deleteItemConfirm=(item)=>{
    localStore();   
  
  })
+ 
+       
+const deleteCompositionConfirm=((index,item)=>{
+  const itemSearch = itemsArray.value.find((i) => {
+      return i.id === item.id;
+    });
+    let itemIndex = itemsArray.value.indexOf(itemSearch);
+    console.log(itemSearch,itemIndex);
+    
+    itemsArray.value[itemIndex].composition.splice(index, 1);
+    localStore();
+})
 
-    return {itemsArray,save,defaultItem,deleteItemConfirm,editedItemSave,compositionSave};
+    return {itemsArray,save,defaultItem,deleteItemConfirm,deleteCompositionConfirm,editedItemSave,compositionSave};
 });
