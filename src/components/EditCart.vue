@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted,computed,watch} from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconUpload, IconPhotoFilled } from "@tabler/icons-vue";
@@ -8,6 +8,7 @@ const store = useCartStore();
 const { itemsArray } = storeToRefs(store);
 const { editedItemSave } = store;
 const alert = ref(false);
+
 const props = defineProps({
   id: String,
 });
@@ -46,17 +47,33 @@ const cancelEdit = () => {
 };
 const uploadImage = () => {
   editedItemSave(editedItem.value);
-  alert.value = true;
+  if (editedItem.value.designUrl !== "") alert.value = true;
 };
-const handleSave=(()=>{
-  alert.value=true;
-  editedItemSave(editedItem)
-})
+const handleSave = () => {
+  alert.value = true;
+  editedItemSave(editedItem.value);
+};
+
+  const finalPrice = computed(() => {
+  const totalPrice = Number(editedItem.value.totalPrice) || 0;
+  const  compositionPrice = editedItem.value.composition.reduce((acc, item) => acc +(Number (item.price )|| 0),0);
+  return totalPrice + compositionPrice;
+});
+
 </script>
 
 <template>
   <v-container>
     <v-row>
+      <v-col cols="12">
+        <v-card
+          class="mx-auto pa-10 text-h3"
+          color="surface-variant"
+          max-width="500"
+        >
+          Total Price : {{finalPrice}}
+        </v-card>
+      </v-col>
       <v-col cols="4">
         <v-card class="h-100">
           <h1>Image</h1>
@@ -91,7 +108,7 @@ const handleSave=(()=>{
       <v-col cols="8">
         <v-card class="h-100">
           <v-card-title>
-            <span class="text-h5">New Item</span>
+            <span class="text-h5">Edit Item</span>
           </v-card-title>
 
           <v-card-text>
@@ -119,10 +136,10 @@ const handleSave=(()=>{
                   ></v-select>
                 </v-col>
                 <v-col cols="12" sm="6">
-                  <v-text-field
+                  <v-textarea
                     v-model="editedItem.description"
                     label="Description"
-                  ></v-text-field>
+                  ></v-textarea>
                 </v-col>
                 <v-col cols="12" sm="6">
                   <v-text-field
@@ -141,11 +158,7 @@ const handleSave=(()=>{
                   Cancel
                 </v-btn>
 
-                <v-btn
-                  class="text-blue"
-                  variant="elevated"
-                  @click="handleSave"
-                >
+                <v-btn class="text-blue" variant="elevated" @click="handleSave">
                   Save
                 </v-btn>
               </v-row>
@@ -156,15 +169,16 @@ const handleSave=(()=>{
     </v-row>
   </v-container>
   <v-alert
-      v-model="alert"
-       border="start"
-      color="success"
-       close-label="Close Alert"
-      variant="tonal"
-       title="Alert"
-       elevation="2"
-      closable
-      >
-      Success</v-alert>
+    v-model="alert"
+    border="start"
+    color="success"
+    close-label="Close Alert"
+    variant="tonal"
+    title="Alert"
+    elevation="2"
+    closable
+  >
+    Success</v-alert
+  >
   <CompositionTable :id="props.id" />
 </template>

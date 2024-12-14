@@ -1,30 +1,11 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted} from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconTrash, IconPencil } from "@tabler/icons-vue";
 const store = useCartStore();
 const { itemsArray } = storeToRefs(store);
 const { compositionSave, deleteCompositionConfirm } = store;
-const props = defineProps({
-  id: {
-    type: String,
-  },
-});
-const retrieveItemFromLocalStorage = () => {
-  retrievedItem = itemsArray.value.find((item) => {
-    return props.id === item.id;
-  });
-  editedItem.value = { ...retrievedItem };
-};
-let retrievedItem;
-onMounted(() => {
-  let retrievedData = localStorage.getItem("items");
-  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
-  if (props.id) {
-    retrieveItemFromLocalStorage();
-  }
-});
 const editedItem = ref({
   id: "",
   name: "",
@@ -41,6 +22,7 @@ const editedItem = ref({
       purity: "",
     },
   ],
+  finalPrice:0
 });
 const composition = ref({
   material: "",
@@ -53,7 +35,7 @@ const composition = ref({
 const headers = [
   { title: "Material,", key: "material" },
   { title: "count", key: "count" },
-  { title: "Weight", key: "weight" },
+  { title: "Weight(gm)", key: "weight" },
   { title: "Price", key: "price" },
   { title: "Purity", key: "purity" },
   { title: "Actions", key: "actions" },
@@ -61,9 +43,29 @@ const headers = [
 const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
+let retrievedItem;
+const props = defineProps({
+  id: {
+    type: String,
+  },
+});
+const retrieveItemFromLocalStorage = () => {
+  retrievedItem = itemsArray.value.find((item) => {
+    return props.id === item.id;
+  });
+  editedItem.value = { ...retrievedItem };
+};
+onMounted(() => {
+  let retrievedData = localStorage.getItem("items");
+  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
+  if (props.id) {
+    retrieveItemFromLocalStorage();
+  }
+});
 const formTitle = computed(() => {
   return editedIndex.value === -1 ? "New Item" : "Edit Item";
 });
+
 const closeComposition = () => {
   dialog.value = false;
   editedIndex.value = -1;
@@ -154,18 +156,21 @@ const editComposition = (item) => {
                   <v-col cols="12" md="4" sm="6">
                     <v-text-field
                       v-model="composition.count"
+                      type="Number"
                       label="Count of material"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4" sm="6">
                     <v-text-field
                       v-model="composition.weight"
+                        type="Number"
                       label="Weight(g)"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4" sm="6">
                     <v-text-field
                       v-model="composition.price"
+                        type="Number"
                       label="Price"
                     ></v-text-field>
                   </v-col>
