@@ -32,6 +32,8 @@ const handleSave = () => {
   return totalPrice + compositionPrice;
 });
 onMounted(() => {
+  let retrievedData = localStorage.getItem("items");
+  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
   if (props.id) {
     retrievedItem= itemsArray.value.find((item) => {
       return props.id === item.id;
@@ -54,12 +56,14 @@ onMounted(() => {
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="4">
+      <v-col cols="12" md="4">
         <v-card class="h-100">
           <h1 class="text-h5">Image</h1>
+          <div :class="$vuetify.display.sm?'h-75 w-75 mx-auto':''">
+          
           <v-img
             v-if="defaultItem.designUrl"
-             
+            :class="$vuetify.display.sm?'h-75':''"
             cover
             :src="defaultItem.designUrl"
           ></v-img>
@@ -67,11 +71,12 @@ onMounted(() => {
             v-else
            
             cover
-            height="$vuetify.display.xs ? 200 : 300"
+          
             class="d-flex justify-center align-center bg-grey"
           >
-            <IconPhotoFilled class="w-100 h-25" />
+            <IconPhotoFilled class="w-100" />
           </v-img>
+        </div>
           <v-text-field
             v-model="defaultItem.designUrl"
             label="Enter your image url"
@@ -82,10 +87,11 @@ onMounted(() => {
               <IconUpload @click="uploadImage" />
             </template>
           </v-text-field>
+  
         </v-card>
       </v-col>
 
-      <v-col cols="12"  sm="8">
+      <v-col cols="12"  md="8">
         <v-card class="h-100">
           <v-card-title>
             <span :class="$vuetify.display.xs ? 'text-h6' : 'text-h5'">Edit Item</span>
