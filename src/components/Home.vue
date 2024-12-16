@@ -30,10 +30,6 @@ const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
 
-onMounted(() => {
-  let retrievedData = localStorage.getItem("items");
-  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
-});
 
 const editItem = (item) => {
   router.push(`/edit/${item.id}`);
@@ -43,37 +39,39 @@ const editItem = (item) => {
 const close = () => {
   dialog.value = false;
   editedIndex.value = -1;
-  editedItem.value = Object.assign({}, defaultItem.value);
+  defaultItem.value = Object.assign({}, editedItem.value);
 };
 
 const closeDelete = () => {
   dialogDelete.value = false;
   editedIndex.value = -1;
-  editedItem.value = Object.assign({}, defaultItem.value);
+  defaultItem.value = Object.assign({}, editedItem.value);
 };
 
 const showDeleteDialogBox = (item) => {
   dialogDelete.value = true;
-  editedItem.value = item;
+ defaultItem.value = item;
 };
 const deleteItem = () => {
-  deleteItemConfirm(editedItem.value);
+  deleteItemConfirm();
   dialogDelete.value = false;
-  editedItem.value = Object.assign({}, defaultItem.value);
+  defaultItem.value = Object.assign({}, editedItem.value);
 };
 const saveItem = () => {
-  save(editedItem.value);
-  editedItem.value = Object.assign({}, defaultItem.value);
+  save();
+  defaultItem.value = Object.assign({}, editedItem.value);
   dialog.value = false;
 };
-// const nameRules = [
-//   (v) => !!v || "Name is required.",
-//   (v) => (v && v.length <= 20) || "Name must be less than 20 characters.",
-// ];
+
+onMounted(() => {
+  let retrievedData = localStorage.getItem("items");
+  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
+});
+
 </script>
 
 <template>
-  <v-data-table :headers="headers" :items="itemsArray" class="headingClass">
+  <v-data-table  dense fixed-header :headers="headers" :items="itemsArray" class="headingClass">
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Jewellery</v-toolbar-title>
@@ -95,17 +93,24 @@ const saveItem = () => {
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12">
+                  <v-col cols="12" sm='6'>
                     <v-text-field
-                      v-model="editedItem.name"
+                      v-model="defaultItem.name"
                       label="Name of item"
                       required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm='6'>
+                    <v-text-field
+                      type="Number"
+                      v-model="defaultItem.totalPrice"
+                      label="TotalPrice"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12">
                     <v-select
                       label="Select Category"
-                      v-model="editedItem.category"
+                      v-model="defaultItem.category"
                       :items="[
                         'EarRing',
                         'Pendant',
@@ -117,19 +122,14 @@ const saveItem = () => {
                       ]"
                     ></v-select>
                   </v-col>
+                 
                   <v-col cols="12">
                     <v-textarea
-                      v-model="editedItem.description"
+                      v-model="defaultItem.description"
                       label="Description"
                     ></v-textarea>
                   </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      type="Number"
-                      v-model="editedItem.totalPrice"
-                      label="TotalPrice"
-                    ></v-text-field>
-                  </v-col>
+                 
                 </v-row>
               </v-container>
             </v-card-text>

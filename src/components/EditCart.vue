@@ -4,62 +4,41 @@ import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconUpload, IconPhotoFilled } from "@tabler/icons-vue";
 import CompositionTable from "./CompositionTable.vue";
-const store = useCartStore();
-const { itemsArray } = storeToRefs(store);
-const { editedItemSave } = store;
-const alert = ref(false);
 
 const props = defineProps({
   id: String,
 });
 
-const editedItem = ref({
-  id: "",
-  name: "",
-  category: "",
-  description: "",
-  totalPrice: 0,
-  designUrl: "",
-  composition: [
-    {
-      material: "",
-      count: 0,
-      weight: 0,
-      price: 0,
-      purity: "",
-    },
-  ],
-});
-
+const store = useCartStore();
+const { itemsArray,defaultItem } = storeToRefs(store);
+const { editedItemSave } = store;
+const alert = ref(false);
 let retrievedItem;
-onMounted(() => {
-  let retrievedData = localStorage.getItem("items");
-  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
-  if (props.id) {
-    retrievedItem = itemsArray.value.find((item) => {
-      return props.id === item.id;
-    });
-    editedItem.value = { ...retrievedItem };
-  }
-});
 const cancelEdit = () => {
-  editedItem.value = { ...retrievedItem };
+  defaultItem.value = { ...retrievedItem };
 };
 const uploadImage = () => {
-  editedItemSave(editedItem.value);
-  if (editedItem.value.designUrl !== "") alert.value = true;
+  editedItemSave();
+  if (defaultItem.value.designUrl !== "") alert.value = true;
 };
 const handleSave = () => {
   alert.value = true;
-  editedItemSave(editedItem.value);
+  editedItemSave();
 };
 
   const finalPrice = computed(() => {
-  const totalPrice = Number(editedItem.value.totalPrice) || 0;
-  const  compositionPrice = editedItem.value.composition.reduce((acc, item) => acc +(Number (item.price )|| 0),0);
+  const totalPrice = Number(defaultItem.value.totalPrice) || 0;
+  const  compositionPrice = defaultItem.value.composition.reduce((acc, item) => acc +(Number (item.price )|| 0),0);
   return totalPrice + compositionPrice;
 });
-
+onMounted(() => {
+  if (props.id) {
+    retrievedItem= itemsArray.value.find((item) => {
+      return props.id === item.id;
+    });
+    defaultItem.value = { ...retrievedItem };
+  }
+});
 </script>
 
 <template>
@@ -67,36 +46,37 @@ const handleSave = () => {
     <v-row>
       <v-col cols="12">
         <v-card
-          class="mx-auto pa-10 text-h3"
+          class="mx-auto pa-5" :class="$vuetify.display.xs ? 'text-h5 text-center' : 'text-h3'"
           color="surface-variant"
           max-width="500"
         >
           Total Price : {{finalPrice}}
         </v-card>
       </v-col>
-      <v-col cols="4">
+
+      <v-col cols="12" sm="4">
         <v-card class="h-100">
-          <h1>Image</h1>
-          <!-- <IconPhotoFilled/> -->
+          <h1 class="text-h5">Image</h1>
           <v-img
-            v-if="editedItem.designUrl"
-            :width="300"
-            aspect-ratio="16/9"
+            v-if="defaultItem.designUrl"
+             
             cover
-            :src="editedItem.designUrl"
+            :src="defaultItem.designUrl"
           ></v-img>
           <v-img
             v-else
-            :width="300"
-            height="300"
+           
+            cover
+            height="$vuetify.display.xs ? 200 : 300"
             class="d-flex justify-center align-center bg-grey"
           >
             <IconPhotoFilled class="w-100 h-25" />
           </v-img>
           <v-text-field
-            v-model="editedItem.designUrl"
+            v-model="defaultItem.designUrl"
             label="Enter your image url"
             class="ma-4 outlined"
+             :class="$vuetify.display.xs ? 'text-h6' : 'text-h5'"
           >
             <template #append>
               <IconUpload @click="uploadImage" />
@@ -105,25 +85,27 @@ const handleSave = () => {
         </v-card>
       </v-col>
 
-      <v-col cols="8">
+      <v-col cols="12"  sm="8">
         <v-card class="h-100">
           <v-card-title>
-            <span class="text-h5">Edit Item</span>
+            <span :class="$vuetify.display.xs ? 'text-h6' : 'text-h5'">Edit Item</span>
+           
           </v-card-title>
 
           <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12" sm="6">
+                <v-col cols="12"  md="4">
                   <v-text-field
-                    v-model="editedItem.name"
+                    v-model="defaultItem.name"
                     label="Name of item"
-                  ></v-text-field>
+                      :class="$vuetify.display.xs ? 'text-body-small' : 'text-body-medium'"
+                      ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6">
+                <v-col cols="12" md="4">
                   <v-select
                     label="Select Category"
-                    v-model="editedItem.category"
+                    v-model="defaultItem.category"
                     :items="[
                       'EarRing',
                       'Pendant',
@@ -133,20 +115,24 @@ const handleSave = () => {
                       'Bangle',
                       'Bracelet',
                     ]"
+                    :class="$vuetify.display.xs ? 'text-body-small' : 'text-body-medium'"
                   ></v-select>
                 </v-col>
-                <v-col cols="12" sm="6">
-                  <v-textarea
-                    v-model="editedItem.description"
-                    label="Description"
-                  ></v-textarea>
-                </v-col>
-                <v-col cols="12" sm="6">
+               
+                <v-col cols="12"  md="4">
                   <v-text-field
                     type="Number"
-                    v-model="editedItem.totalPrice"
+                    v-model="defaultItem.totalPrice"
                     label="TotalPrice"
+                    :class="$vuetify.display.xs ? 'text-body-small' : 'text-body-medium'"
                   ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-textarea
+                    v-model="defaultItem.description"
+                    label="Description"
+                    :class="$vuetify.display.xs ? 'text-body-small' : 'text-body-medium'"
+                  ></v-textarea>
                 </v-col>
               </v-row>
             </v-container>

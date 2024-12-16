@@ -3,27 +3,14 @@ import { ref, computed, onMounted} from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconTrash, IconPencil } from "@tabler/icons-vue";
-const store = useCartStore();
-const { itemsArray } = storeToRefs(store);
-const { compositionSave, deleteCompositionConfirm } = store;
-const editedItem = ref({
-  id: "",
-  name: "",
-  category: "",
-  description: "",
-  totalPrice: 0,
-  designUrl: "",
-  composition: [
-    {
-      material: "",
-      count: 0,
-      weight: 0,
-      price: 0,
-      purity: "",
-    },
-  ],
-  finalPrice:0
+const props = defineProps({
+  id: {
+    type: String,
+  },
 });
+const store = useCartStore();
+const {defaultItem } = storeToRefs(store);
+const { compositionSave, deleteCompositionConfirm } = store;
 const composition = ref({
   material: "",
   count: 0,
@@ -43,25 +30,6 @@ const headers = [
 const dialog = ref(false);
 const dialogDelete = ref(false);
 const editedIndex = ref(-1);
-let retrievedItem;
-const props = defineProps({
-  id: {
-    type: String,
-  },
-});
-const retrieveItemFromLocalStorage = () => {
-  retrievedItem = itemsArray.value.find((item) => {
-    return props.id === item.id;
-  });
-  editedItem.value = { ...retrievedItem };
-};
-onMounted(() => {
-  let retrievedData = localStorage.getItem("items");
-  if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
-  if (props.id) {
-    retrieveItemFromLocalStorage();
-  }
-});
 const formTitle = computed(() => {
   return editedIndex.value === -1 ? "New Item" : "Edit Item";
 });
@@ -76,7 +44,6 @@ const closeComposition = () => {
     price: 0,
     purity: "",
   };
-  editedItem.value = { ...retrievedItem };
 };
 const closeDeleteCompositionDialog = () => {
   dialogDelete.value = false;
@@ -85,17 +52,16 @@ const closeDeleteCompositionDialog = () => {
 
 const showCompositionDialogForDelete = (item) => {
   dialogDelete.value = true;
-  editedIndex.value = editedItem.value.composition.indexOf(item);
+  editedIndex.value = defaultItem.value.composition.indexOf(item);
 };
 const save = () => {
+  
   if (editedIndex.value === -1) {
-    editedItem.value.composition.push(composition.value);
+    defaultItem.value.composition.push(composition.value);
   } else {
-    editedItem.value.composition[editedIndex.value] = composition.value;
+    defaultItem.value.composition[editedIndex.value] = composition.value;
   }
-  // editedItem.value.totalPrice+=composition.value.price;
-  compositionSave(editedItem.value);
-
+  compositionSave();
   dialog.value = false;
   composition.value = {
     material: "",
@@ -105,12 +71,11 @@ const save = () => {
     purity: "",
   };
   editedIndex.value = -1;
-  retrieveItemFromLocalStorage();
+ 
 };
 
 const deleteCompositionItem = () => {
-  deleteCompositionConfirm(editedIndex.value, editedItem.value);
-  retrieveItemFromLocalStorage();
+  deleteCompositionConfirm(editedIndex.value);
   editedIndex.value = -1;
   dialogDelete.value = false;
   composition.value = {
@@ -123,13 +88,13 @@ const deleteCompositionItem = () => {
 };
 const editComposition = (item) => {
   composition.value = { ...item };
-  editedIndex.value = editedItem.value.composition.indexOf(item);
+  editedIndex.value = defaultItem.value.composition.indexOf(item);
   dialog.value = true;
 };
 </script>
 
 <template>
-  <v-data-table :headers="headers" :items="editedItem.composition" class="ma-5">
+  <v-data-table :headers="headers" :items="defaultItem.composition" class="ma-5">
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title class="ma-3">COMPOSITION</v-toolbar-title>
