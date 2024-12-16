@@ -55,7 +55,7 @@ onMounted(() => {
       <v-col cols="12" md="4">
         <v-card class="h-100">
           <h1 class="text-h5">Image</h1>
-          <div :class="$vuetify.display.sm?'h-75 w-75 mx-auto':''">
+          <div :class="$vuetify.display.smAndDown?'h-100 w-75 mx-auto':'h-100'">
           
           <v-img
             v-if="defaultItem.designUrl"
@@ -65,14 +65,12 @@ onMounted(() => {
           ></v-img>
           <v-img
             v-else
-           
-            cover
-          
+            :class="$vuetify.display.smAndDown?'h-25':'h-75'"
             class="d-flex justify-center align-center bg-grey"
           >
             <IconPhotoFilled class="w-100" />
           </v-img>
-        </div>
+       
           <v-text-field
             v-model="defaultItem.designUrl"
             label="Enter your image url"
@@ -83,7 +81,7 @@ onMounted(() => {
               <IconUpload @click="uploadImage" />
             </template>
           </v-text-field>
-  
+        </div>
         </v-card>
       </v-col>
 
