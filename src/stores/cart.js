@@ -35,6 +35,7 @@ const deleteItemConfirm=()=>{
         return i.id === defaultItem.value.id;
       });
       let index = itemsArray.value.indexOf(itemSearch);
+      defaultItem.value.finalPrice=fPrice;  
       itemsArray.value.splice(index, 1);
       localStore();
   }
@@ -49,14 +50,14 @@ const deleteItemConfirm=()=>{
   })
  
  const compositionSave=(()=>{
-  // const itemSearch = itemsArray.value.find((i) => {
-  //   return i.id === defaultItem.value.id;
-  // });
-  // console.log(itemSearch);
-  // let index = itemsArray.value.indexOf(itemSearch);
-  // console.log(index);
-  
-  //   Object.assign(itemsArray.value[index], defaultItem.value);
+  const itemSearch = itemsArray.value.find((i) => {
+    return i.id === defaultItem.value.id;
+  });
+  console.log(itemSearch);
+  let index = itemsArray.value.indexOf(itemSearch);
+  defaultItem.value.finalPrice=fPrice;  
+    Object.assign(itemsArray.value[index], defaultItem.value);
+
     localStore();   
  
  })
