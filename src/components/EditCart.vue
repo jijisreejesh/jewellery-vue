@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted,computed,watch} from "vue";
+import { ref, onMounted} from "vue";
 import { useCartStore } from "../stores/cart";
 import { storeToRefs } from "pinia";
 import { IconUpload, IconPhotoFilled } from "@tabler/icons-vue";
@@ -10,8 +10,8 @@ const props = defineProps({
 });
 
 const store = useCartStore();
-const { itemsArray,defaultItem } = storeToRefs(store);
-const { editedItemSave } = store;
+const { itemsArray,defaultItem} = storeToRefs(store);
+const { editedItemSave} = store;
 const alert = ref(false);
 let retrievedItem;
 const cancelEdit = () => {
@@ -26,11 +26,7 @@ const handleSave = () => {
   editedItemSave();
 };
 
-  const finalPrice = computed(() => {
-  const totalPrice = Number(defaultItem.value.totalPrice) || 0;
-  const  compositionPrice = defaultItem.value.composition.reduce((acc, item) => acc +(Number (item.price )|| 0),0);
-  return totalPrice + compositionPrice;
-});
+  
 onMounted(() => {
   let retrievedData = localStorage.getItem("items");
   if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
@@ -48,11 +44,11 @@ onMounted(() => {
     <v-row>
       <v-col cols="12">
         <v-card
-          class="mx-auto pa-5" :class="$vuetify.display.xs ? 'text-h5 text-center' : 'text-h3'"
+          class="mx-auto pa-5" :class="$vuetify.display.smAndDown  ? 'text-h5 text-center' : 'text-h4'"
           color="surface-variant"
           max-width="500"
         >
-          Total Price : {{finalPrice}}
+          Total Price : {{defaultItem.finalPrice}}
         </v-card>
       </v-col>
 

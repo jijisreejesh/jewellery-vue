@@ -17,6 +17,7 @@ const editedItem = ref({
   totalPrice: 0,
   designUrl: "",
   composition: [],
+  finalPrice:0
 });
 const headers = [
   { title: "Name", key: "name" },
@@ -66,6 +67,7 @@ const saveItem = () => {
 onMounted(() => {
   let retrievedData = localStorage.getItem("items");
   if (retrievedData) itemsArray.value = JSON.parse(retrievedData);
+  defaultItem.value=editedItem.value;
 });
 
 </script>
